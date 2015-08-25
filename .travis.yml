@@ -4,7 +4,7 @@ python:
 before_script:
  - sleep 15
 services:
-  - rabbitmq
+ - rabbitmq
 install: "pip install -r testing_requirements.txt && pip install -r requirements.txt"
 script:
  - find . -name "*.py" -exec pep8 {} \;
