@@ -1,0 +1,13 @@
+language: python
+python:
+ - "2.7"
+before_script:
+ - sleep 15
+services:
+  - rabbitmq
+install: "pip install -r testing_requirements.txt && pip install -r requirements.txt"
+script:
+ - find . -name "*.py" -exec pep8 {} \;
+ - nosetests --with-coverage --cover-package=config_manager,stores,workers,queue_manager,urlbuilders
+ - radon mi config_manager queue_manager status_updater
+ - radon cc config_manager queue_manager status_updater
