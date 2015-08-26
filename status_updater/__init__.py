@@ -1,9 +1,8 @@
 from abc import ABCMeta, abstractmethod
-
+from metahosting.common import get_uuid
 
 import logging
 import time
-import uuid
 
 
 class StatusUpdater(object):
@@ -12,7 +11,7 @@ class StatusUpdater(object):
     def __init__(self, config, send_method):
         self.config = config
         self.send_method = send_method
-        self.uuid = _get_uuid(config)
+        self.uuid = get_uuid(config['uuid_source'])
         self.type = config['type']
         self.running = False
 
@@ -65,18 +64,3 @@ class StatusUpdater(object):
         stats['type'] = self.type
         stats['ts'] = time.time()
         return stats
-
-
-def _get_uuid(conf):
-    content = ''
-    try:
-        filehandler = open(conf['uuid_source'], 'r')
-        content = (filehandler.read()).rstrip()
-        return str(uuid.UUID(content))
-    except IOError:
-        logging.error('Not able to read file: %s ', conf['uuid_source'])
-    except ValueError:
-        logging.error('Not able to validate uuid: %s ', content)
-    except KeyError:
-        logging.error('No path for uuid file in conf')
-    return str(uuid.uuid4())

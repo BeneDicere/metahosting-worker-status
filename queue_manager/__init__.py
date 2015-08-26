@@ -1,6 +1,7 @@
-import logging
-from config_manager import get_configuration
+from metahosting.common.config_manager import get_configuration
 from queue_manager.rabbit import BlockingPikaManager
+
+import logging
 
 
 manager = dict()

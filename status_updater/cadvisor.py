@@ -1,7 +1,7 @@
-import logging
-import requests
 from status_updater import StatusUpdater
 
+import logging
+import requests
 
 class CadvisorStatusUpdater(StatusUpdater):
 
@@ -13,8 +13,7 @@ class CadvisorStatusUpdater(StatusUpdater):
         try:
             response = requests.get('{}{}'.format(self.api, subpath))
         except Exception as err:
-            logging.error('Unable to make request to status endpoint %s',
-                          err.message)
+            logging.error('Unable to make request to api  %s', err.message)
             return None
         if response.status_code == 200:
             return response.json()
@@ -26,7 +25,7 @@ class CadvisorStatusUpdater(StatusUpdater):
         load = self._get('summary')
         if cores and load:
             cores = cores['num_cores']
-            load = load['/']['minute_usage']['cpu']['mean']
+            load = load['/']['latest_usage']['cpu']
         return {'cores': cores, 'load': load}
 
     def get_disk_info(self):
@@ -45,6 +44,6 @@ class CadvisorStatusUpdater(StatusUpdater):
         free = None
         if total and used:
             total = total['memory_capacity']
-            used = used['/']['minute_usage']['memory']['mean']
+            used = used['/']['latest_usage']['memory']
             free = total - used
         return {'total': total, 'used': used, 'free': free}
