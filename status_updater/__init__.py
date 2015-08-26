@@ -8,9 +8,10 @@ import time
 class StatusUpdater(object):
     __metaclass__ = ABCMeta
 
-    def __init__(self, config, send_method):
+    def __init__(self, config, messaging):
         self.config = config
-        self.send_method = send_method
+        self.publish_manager = messaging(config=config,
+                                         queue='status')
         self.uuid = get_uuid(config['uuid_source'])
         self.type = config['type']
         self.running = False
@@ -25,7 +26,7 @@ class StatusUpdater(object):
             stats = self.get_stats()
             logging.info('Publishing status: %s', self.uuid)
             logging.debug('Publishing status: %s', str(stats))
-            self.send_method('status', stats)
+            self.publish_manager.publish('status', 'datapoint', stats)
             time.sleep(10)
 
     def stop(self, signal, stack):

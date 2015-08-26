@@ -5,8 +5,8 @@ import requests
 
 class CadvisorStatusUpdater(StatusUpdater):
 
-    def __init__(self, config, send_method):
-        super(CadvisorStatusUpdater, self).__init__(config, send_method)
+    def __init__(self, config, messaging):
+        super(CadvisorStatusUpdater, self).__init__(config, messaging)
         self.api = '{}{}'.format(config['status_endpoint'], '/api/v2.0/')
 
     def _get(self, subpath):
