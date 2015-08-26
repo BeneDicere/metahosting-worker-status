@@ -7,12 +7,11 @@ class CadvisorStatusUpdater(StatusUpdater):
 
     def __init__(self, config, send_method):
         super(CadvisorStatusUpdater, self).__init__(config, send_method)
-        self.cadvisor_api_url = '{}{}'.format(config['status_endpoint'],
-                                              '/api/v2.0/')
+        self.api = '{}{}'.format(config['status_endpoint'], '/api/v2.0/')
 
     def _get(self, subpath):
         try:
-            response = requests.get('{}{}'.format(self.cadvisor_api_url, subpath))
+            response = requests.get('{}{}'.format(self.api, subpath))
         except Exception as err:
             logging.error('Unable to make request to status endpoint %s',
                           err.message)

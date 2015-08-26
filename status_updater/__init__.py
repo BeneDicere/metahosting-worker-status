@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
 
+
 import logging
 import time
 import uuid
@@ -7,24 +8,26 @@ import uuid
 
 class StatusUpdater(object):
     __metaclass__ = ABCMeta
-    publishing_interval = 10
 
     def __init__(self, config, send_method):
         self.config = config
         self.send_method = send_method
         self.uuid = _get_uuid(config)
-        self.shutdown = False
+        self.type = config['type']
+        self.running = False
 
     def start(self):
         """
         start sending status information to the queue
         """
+        self.running = True
         logging.info('Status updater started at %s', str(time.ctime()))
-        while not self.shutdown:
+        while self.running:
+            stats = self.get_stats()
             logging.info('Publishing status: %s', self.uuid)
-            logging.debug('Publishing stats: %s', str(self.get_stats()))
-            self.send_method('status', self.get_stats())
-            time.sleep(self.publishing_interval)
+            logging.debug('Publishing status: %s', str(stats))
+            self.send_method('status', stats)
+            time.sleep(10)
 
     def stop(self, signal, stack):
         """
@@ -34,7 +37,7 @@ class StatusUpdater(object):
         :return:
         """
         logging.info('Status updater stopped with signal %s', signal)
-        self.shutdown = True
+        self.running = False
 
     @abstractmethod
     def get_cpu_info(self):
@@ -59,8 +62,8 @@ class StatusUpdater(object):
         stats['instances'] = self.get_instance_count()
         stats['memory'] = self.get_memory_info()
         stats['uuid'] = self.uuid
+        stats['type'] = self.type
         stats['ts'] = time.time()
-        logging.debug('collected statistics = %s', stats)
         return stats
 
 
