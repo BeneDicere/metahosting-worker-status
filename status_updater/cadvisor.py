@@ -7,7 +7,8 @@ class CadvisorStatusUpdater(StatusUpdater):
 
     def __init__(self, config, messaging):
         super(CadvisorStatusUpdater, self).__init__(config, messaging)
-        self.api = '{}{}'.format(config['status_endpoint'], '/api/v2.0/')
+        self.api = '{}{}'.format(
+            config['status_endpoint'].replace('tcp', 'http'), '/api/v2.0/')
 
     def _get(self, subpath):
         try:

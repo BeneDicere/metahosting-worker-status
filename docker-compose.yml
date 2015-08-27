@@ -1,28 +1,3 @@
-messaging:
-  image: rabbitmq:3
-  ports:
-   - "5672:5672"
-   - "15672:15672"
-worker:
-  image: benedicere/metahosting-worker-test
-  links:
-    - db
-    - messaging
-  volumes:
-    - /var/run/docker.sock:/var/run/docker.sock
-    - /sys:/sys:ro
-  environment:
-    - DB_LOCAL_COLLECTION=exist-local-instances
-    - WORKER_NAME=exist
-    - WORKER_DESCRIPTION=exist xml database
-    - DOCKER_SOCKET=unix:///var/run/docker.sock
-    - WORKER_IMAGE=dariah/exist:latest
-    - WORKER_TYPE=workers.docker_worker.DockerWorker
-    - WORKER_PUBIP=192.168.99.100
-    - WORKER_PUBPORTS=7000:7009
-    - INSTANCE_ENDPOINTS=http://127.0.0.1/exist
-    - INSTANCE_ENVIRONMENT__EXIST_MEMORY=512
-    - INSTANCE_ENVIRONMENT__EXIST_ADMIN_PASSWORD=
 cadvisor:
   image: google/cadvisor:latest
   volumes:
@@ -32,8 +7,9 @@ cadvisor:
     - "/var/lib/docker/:/var/lib/docker:ro"
 status:
   image: benedicere/metahosting-worker-status
+  external_links:
+    - metahostinghtml_messaging_1:messaging
   links:
-    - messaging
     - cadvisor
   volumes:
     - /sys:/sys:ro
